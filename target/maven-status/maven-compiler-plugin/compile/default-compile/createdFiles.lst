@@ -1,0 +1,3 @@
+org/futurework/hatsukoi/startup/Bootstrap.class
+org/futurework/hatsukoi/connector/http/HttpConnector.class
+org/futurework/hatsukoi/core/Constants.class
