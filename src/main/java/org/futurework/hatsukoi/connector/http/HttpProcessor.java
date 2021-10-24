@@ -13,6 +13,7 @@ public class HttpProcessor {
     private HttpConnector httpConnector = null;
     private HttpRequest httpRequest;
     private HttpResponse httpResponse;
+    private HttpRequestLine httpRequestLine = new HttpRequestLine();
 
     public HttpProcessor(HttpConnector httpConnector) {
         this.httpConnector = httpConnector;
@@ -46,6 +47,15 @@ public class HttpProcessor {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 解析http请求
+     * @param inputStream 输入流
+     * */
+    public void parseRequest(SocketInputStream inputStream) {
+        // 解析请求行
+        inputStream.readRequestLine(this.httpRequestLine);
     }
 
     /**
