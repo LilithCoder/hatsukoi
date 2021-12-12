@@ -1,7 +1,7 @@
 # hatsukoi
 ## 目录
-- [hatsukoi是什么](#hatsukoi是什么？)
-- [如何启动hatsukoi](#如何启动hatsukoi？)
+- [hatsukoi是什么](#hatsukoi是什么)
+- [如何启动hatsukoi](#如何启动hatsukoi)
 - [hatsukoi的启动脚本](#hatsukoi的启动脚本)
 ## hatsukoi是什么
 hatsukoi是一个类tomcat的web服务器+servlet容器
