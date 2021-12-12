@@ -1,11 +1,11 @@
 # hatsukoi
 ## 目录
-- [hatsukoi是什么？](#hatsukoi是什么？)
-- [如何启动hatsukoi？](#如何启动hatsukoi？)
+- [hatsukoi是什么](#hatsukoi是什么？)
+- [如何启动hatsukoi](#如何启动hatsukoi？)
 - [hatsukoi的启动脚本](#hatsukoi的启动脚本)
-## hatsukoi是什么？
+## hatsukoi是什么
 hatsukoi是一个类tomcat的web服务器+servlet容器
-## 如何启动hatsukoi？
+## 如何启动hatsukoi
 ### 预先步骤
 在编译和启动hatsukoi前有几个预备步骤和配置文件需要知晓
 1. 安装JDK (>=8)：设置环境变量JAVA_HOME为安装JDK的路径 [Oracle官网🔗](https://www.oracle.com/java/technologies/downloads/)
