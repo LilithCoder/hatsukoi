@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Hatsukoi" default="deploy" basedir=".">
+    <property file="build.properties"/>
+    <!-- 项目名称 -->
+    <property name="project"               value="Hatsukoi" />
+
+    <!-- Locations to create build artifacts -->
+    <property name="hatsukoi.home"         value="${basedir}"/>
+    <property name="hatsukoi.output"         value="${basedir}/output"/>
+    <property name="hatsukoi.build"          value="${hatsukoi.output}/build"/>
+    <property name="hatsukoi.classes"        value="${hatsukoi.output}/classes"/>
+    <property name="hatsukoi.startup"      value="${basedir}/java/org/futurework/catalina/startup"/>
+
+    <!--  创建 JAR 的地方 -->
+    <property name="bootstrap.jar" value="${hatsukoi.build}/bin/bootstrap.jar"/>
+
+    <!--Java编译环境-->
+    <property name="compile.source" value="1.8"/>
+    <property name="compile.target" value="1.8"/>
+
+    <patternset id="files.bootstrap">
+        <include name="org/futurework/catalina/startup/Bootstrap.*" />
+    </patternset>
+
+    <!-- =========================== Build targets =========================== -->
+
+    <target name="build-prepare">
+        <!-- Required so we can compile -->
+        <mkdir dir="${hatsukoi.classes}"/>
+
+        <!-- Ensure these directories are removed every time we re-build -->
+        <delete dir="${hatsukoi.build}/temp" />
+        <delete dir="${hatsukoi.build}/work" />
+
+        <!-- Minimum dirs needed for a working hatsukoi instance -->
+        <mkdir dir="${hatsukoi.build}"/>
+        <mkdir dir="${hatsukoi.build}/bin"/>
+        <mkdir dir="${hatsukoi.build}/conf"/>
+        <mkdir dir="${hatsukoi.build}/lib"/>
+        <mkdir dir="${hatsukoi.build}/logs"/>
+        <mkdir dir="${hatsukoi.build}/temp"/>
+        <mkdir dir="${hatsukoi.build}/webapps"/>
+    </target>
+
+    <!--编译步骤：将java文件夹下所有java文件编译，结果class文件放到output/class-->
+    <target name="compile" depends="build-prepare">
+        <javac srcdir="java" destdir="${hatsukoi.classes}"
+               debug="${compile.debug}"
+               deprecation="${compile.deprecation}"
+               source="${compile.source}"
+               target="${compile.target}"
+               excludes="**/.svn/**"
+               encoding="ISO-8859-1"
+               includeAntRuntime="true" />
+    </target>
+
+    <!--打包步骤：将目标dir(output/class)内的Bootstrap命名的文件打包成为bootstrap.jar，放到output/build/bin-->
+    <target name="package" depends="compile" >
+        <!-- Bootstrap JAR File -->
+        <jarIt jarfile="${bootstrap.jar}"
+               filesDir="${hatsukoi.classes}"
+               filesId="files.bootstrap" />
+    </target>
+
+    <target name="deploy" depends="package">
+        <!-- Copy scripts -->
+        <copy todir="${hatsukoi.build}/bin">
+            <fileset dir="bin">
+                <include name="*.sh"/>
+            </fileset>
+        </copy>
+        <!-- Copy doesn't retain permissions -->
+        <chmod dir="${hatsukoi.build}/bin" includes="*.sh" perm="+x"/>
+    </target>
+
+    <!-- ======================= Macros, Taskdefs etc ======================== -->
+
+    <macrodef name="jarIt" description="utility macro for standard JAR packaging">
+        <attribute name="jarfile"
+                   description="the name of the JAR file to create"/>
+        <attribute name="filesDir"
+                   description="the directory from which to obtain the files "/>
+        <attribute name="filesId"
+                   description="the patternset id of the files to use"/>
+        <sequential>
+            <jar jarfile="@{jarfile}">
+                <fileset dir="@{filesDir}">
+                    <patternset refid="@{filesId}"/>
+                </fileset>
+            </jar>
+        </sequential>
+    </macrodef>
+</project>
