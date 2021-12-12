@@ -2,7 +2,7 @@
 ## 目录
 - [hatsukoi是什么](#hatsukoi是什么)
 - [如何启动hatsukoi](#如何启动hatsukoi)
-- [hatsukoi的启动脚本](#hatsukoi的启动脚本)
+- [hatsukoi的启动过程](#hatsukoi的启动过程)
 ## hatsukoi是什么
 hatsukoi是一个类tomcat的web服务器+servlet容器
 ## 如何启动hatsukoi
@@ -14,7 +14,7 @@ hatsukoi是一个类tomcat的web服务器+servlet容器
 4. build.xml文件：Ant构建文件，定义了hatsukoi这个project的构建过程，默认任务为deploy，其中包含了很多target用来定义任务并且根据依赖顺序执行
     - 预编译（build-prepare）：在hatsukoi创建目录output/build和output/classes，build用来放置编译打包后的二进制文件，classes放置class文件
     - 编译（compile）：将java文件夹下所有java文件编译，结果class文件放到output/class
-    - 打包（package）：将output/class内的class文件打包，放到output/build/中
+    - 打包（package）：将output/class内的class文件打包，放到output/build/lib或者/bin中，类加载器会从这里的jar加载类
     - 部署（deploy）：将bin/下的脚本复制到output/build/bin，并修改文件执行权限
 
 ### 编译构建项目
@@ -29,8 +29,16 @@ $ ant
 $ cd ${hatsukoi.home}/output/build/bin
 $ startup.sh start
 ```
-## hatsukoi的启动脚本
-1. bin/startup.sh：判断catalina.sh文件是否存在且可执行，并启动catalina.sh脚本并附带参数
-1. bin/catalina.sh：设置CATALINA相关环境变量（CATALINA_HOME、CATALINA_BASE、CATALINA_OUT），设置CLASSPATH、JAVA_HOME、JRE_HOME、_RUNJAVA、_RUNJDB等环境变量，打印一些提示信息，start模式启动hatsukoi的启动类org.futurework.catalina.startup.Bootstrap，将输出log输出到CATALINA_OUT
+## hatsukoi的启动过程
+### 启动脚本
+1. bin/startup.sh：
+
+    判断catalina.sh文件是否存在且可执行，并启动catalina.sh脚本并附带参数
+1. bin/catalina.sh：
+
+    设置CATALINA相关环境变量（CATALINA_HOME、CATALINA_BASE、CATALINA_OUT），设置CLASSPATH、JAVA_HOME、JRE_HOME、_RUNJAVA、_RUNJDB等环境变量，打印一些提示信息，最后start模式启动hatsukoi的启动类org.futurework.catalina.startup.Bootstrap，执行main方法
+
+    由于CLASSPATH追加了bootstrap.jar配置，启动指令可以从类路径中找到Bootstrap启动类，开启服务，且将输出log输出到CATALINA_OUT
+### Bootstrap启动类
 
 <!-- ![](./uml_diagram1.svg) -->
