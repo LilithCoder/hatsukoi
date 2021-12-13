@@ -40,5 +40,11 @@ $ startup.sh start
 
     由于CLASSPATH追加了bootstrap.jar配置，启动指令可以从类路径中找到Bootstrap启动类，开启服务，且将输出log输出到CATALINA_OUT
 ### Bootstrap启动类
+main方法主入口：
+1. 初始化守护进程daemon为新建的Bootstrap对象
+2. 调用initClassLoaders方法初始化三个类加载器（Common类加载器, Common类加载器, Shared类加载器），catalinaLoader 和 sharedLoader 的 parentClassLoader 是 commonLoader，且指定搜索路径添加在其中，设置当前的线程的上下文类加载器为catalinaLoader
+3. 类加载器的创建方法：根据解析common.loader得到路径的列表，然后构造成Repository 列表，再将Repository 列表传入ClassLoaderFactory.createClassLoader 方法，ClassLoaderFactory.createClassLoader 返回的是 URLClassLoader，而Repository 列表就是这个URLClassLoader 可以加载的类的路径
+4. 初始化完三个ClassLoader对象后，init() 方法就使用 catalinaClassLoader 加载了org.apache.catalina.startup.Catalina 类(Catalina.jar就在Catalina类加载器${catalina.home}/lib下)，并创建了一个对象，然后通过反射调用这个对象的 setParentClassLoader 方法，传入的参数是 sharedClassLoader，通过反射加载Catalina类，并设置Catalina的父类加载器为sharedLoader。最后把这个 Catalina 对象复制给 catalinaDaemon 属性
+5. 处理命令行参数，如果是start，调用catalina的load和start方法；如果是stopServer，调用catalina的stopServer方法
 
 <!-- ![](./uml_diagram1.svg) -->

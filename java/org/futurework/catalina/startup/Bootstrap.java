@@ -1,6 +1,7 @@
 package org.futurework.catalina.startup;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ import java.util.List;
 public class Bootstrap {
 
     /**
-     * 守护进程对象，引用一个Bootstrap实例
+     * Bootstrap的守护进程对象
      * */
     private static Bootstrap daemon = null;
 
@@ -37,6 +38,11 @@ public class Bootstrap {
 
 
     // ----------------- 成员变量 -----------------
+
+    /**
+     * Catalina的守护进程对象
+     * */
+    private Object catalinaDaemon = null;
 
     /**
      * Common类加载器：
@@ -138,6 +144,68 @@ public class Bootstrap {
         // 初始化类加载器
         initClassLoaders();
         Thread.currentThread().setContextClassLoader(catalinaLoader);
+
+        // 通过反射加载Catalina类，并设置Catalina的父类加载器为sharedLoader
+        Class<?> startupClass = catalinaLoader.loadClass("org.futurework.catalina.startup.Catalina");
+        Object startupInstance = startupClass.newInstance();
+        String methodName = "setParentClassLoader";
+        // 方法的入参类型
+        Class<?>[] paramType = new Class[1];
+        paramType[0] = Class.forName("java.lang.ClassLoader");
+        // 方法的入参值
+        Object[] paramValues = new Object[1];
+        paramValues[0] = sharedLoader;
+        Method method = startupInstance.getClass().getMethod(methodName, paramType);
+        method.invoke(startupInstance, paramValues);
+        catalinaDaemon = startupInstance;
+    }
+
+    /**
+     * 调用Catalina守护进程对象的load()，且带入命令行参数
+     * */
+    private void load(String[] arguments) throws Exception {
+        String methodName = "load";
+        Object[] param;
+        Class<?>[] paramTypes;
+        if (arguments == null || arguments.length == 0) {
+            param = null;
+            paramTypes = null;
+        } else {
+            paramTypes = new Class[1];
+            paramTypes[0] = arguments.getClass();
+            param = new Object[1];
+            param[0] = arguments;
+        }
+        Method method = catalinaDaemon.getClass().getMethod(methodName, paramTypes);
+        method.invoke(catalinaDaemon, param);
+    }
+
+    /**
+     * 调用Catalina守护进程对象的start()
+     * */
+    public void start() throws Exception {
+        Method method = catalinaDaemon.getClass().getMethod("start", (Class [] )null);
+        method.invoke(catalinaDaemon, (Object [])null);
+    }
+
+    /**
+     * 调用Catalina守护进程对象的stopServer()
+     * */
+    public void stopServer(String[] arguments) throws Exception {
+        Object param[];
+        Class<?> paramTypes[];
+        if (arguments==null || arguments.length==0) {
+            paramTypes = null;
+            param = null;
+        } else {
+            paramTypes = new Class[1];
+            paramTypes[0] = arguments.getClass();
+            param = new Object[1];
+            param[0] = arguments;
+        }
+        Method method =
+                catalinaDaemon.getClass().getMethod("stopServer", paramTypes);
+        method.invoke(catalinaDaemon, param);
     }
 
     /**
@@ -156,7 +224,24 @@ public class Bootstrap {
             }
             daemon = bootstrap;
         } else {
-            // TODO
+            // 既然已经有了Bootstrap守护进程对象
+            Thread.currentThread().setContextClassLoader(daemon.catalinaLoader);
+        }
+
+        try {
+            String command = "start";
+            if (args.length > 0) {
+                command = args[args.length - 1];
+            }
+            if (command.equals("start")) {
+                daemon.load(args);
+                daemon.start();
+            } else if (command.equals("end")) {
+
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+            System.exit(1);
         }
     }
 }

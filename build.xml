@@ -13,7 +13,7 @@
 
     <!--  创建 JAR 的地方 -->
     <property name="bootstrap.jar" value="${hatsukoi.build}/bin/bootstrap.jar"/>
-    <property name="catalina.jar" value="${tomcat.build}/lib/catalina.jar"/>
+    <property name="catalina.jar" value="${hatsukoi.build}/lib/catalina.jar"/>
 
     <!--Java编译环境-->
     <property name="compile.source" value="1.8"/>
@@ -21,6 +21,10 @@
 
     <patternset id="files.bootstrap">
         <include name="org/futurework/catalina/startup/Bootstrap.*" />
+    </patternset>
+
+    <patternset id="files.catalina">
+        <include name="org/futurework/catalina/**" />
     </patternset>
 
     <!-- =========================== Build targets =========================== -->
