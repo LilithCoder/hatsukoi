@@ -163,21 +163,9 @@ public class Bootstrap {
     /**
      * 调用Catalina守护进程对象的load()，且带入命令行参数
      * */
-    private void load(String[] arguments) throws Exception {
-        String methodName = "load";
-        Object[] param;
-        Class<?>[] paramTypes;
-        if (arguments == null || arguments.length == 0) {
-            param = null;
-            paramTypes = null;
-        } else {
-            paramTypes = new Class[1];
-            paramTypes[0] = arguments.getClass();
-            param = new Object[1];
-            param[0] = arguments;
-        }
-        Method method = catalinaDaemon.getClass().getMethod(methodName, paramTypes);
-        method.invoke(catalinaDaemon, param);
+    private void load() throws Exception {
+        Method method = catalinaDaemon.getClass().getMethod("load", (Class [] )null);
+        method.invoke(catalinaDaemon, (Object [])null);
     }
 
     /**
@@ -191,21 +179,9 @@ public class Bootstrap {
     /**
      * 调用Catalina守护进程对象的stopServer()
      * */
-    public void stopServer(String[] arguments) throws Exception {
-        Object param[];
-        Class<?> paramTypes[];
-        if (arguments==null || arguments.length==0) {
-            paramTypes = null;
-            param = null;
-        } else {
-            paramTypes = new Class[1];
-            paramTypes[0] = arguments.getClass();
-            param = new Object[1];
-            param[0] = arguments;
-        }
-        Method method =
-                catalinaDaemon.getClass().getMethod("stopServer", paramTypes);
-        method.invoke(catalinaDaemon, param);
+    public void stopServer() throws Exception {
+        Method method = catalinaDaemon.getClass().getMethod("stopServer", (Class [] )null);
+        method.invoke(catalinaDaemon, (Object [])null);
     }
 
     /**
@@ -228,16 +204,18 @@ public class Bootstrap {
             Thread.currentThread().setContextClassLoader(daemon.catalinaLoader);
         }
 
+        System.out.println("\033[42;37;1m" + "   [LOG]   " + "\033[0m" + " " + "Bootstrap daemon has been created.");
+
         try {
             String command = "start";
             if (args.length > 0) {
                 command = args[args.length - 1];
             }
             if (command.equals("start")) {
-                daemon.load(args);
+                daemon.load();
                 daemon.start();
             } else if (command.equals("end")) {
-
+                daemon.stopServer();
             }
         } catch (Throwable t) {
             t.printStackTrace();

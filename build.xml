@@ -21,6 +21,8 @@
 
     <patternset id="files.bootstrap">
         <include name="org/futurework/catalina/startup/Bootstrap.*" />
+        <include name="org/futurework/catalina/startup/ClassLoaderFactory.*" />
+        <include name="org/futurework/catalina/startup/ClassLoaderFactory$*.*" />
     </patternset>
 
     <patternset id="files.catalina">

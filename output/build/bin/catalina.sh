@@ -223,7 +223,6 @@ if [ "$1" = "start" ]; then
   # shift用于移动$指向的参数位置 $1本来指向第一个参数 shift一次 $1变为指向第二个参数
   shift
   touch "$CATALINA_OUT"
-  echo $_RUNJAVA
   eval $_NOHUP "\"$_RUNJAVA\"" "\"$LOGGING_CONFIG\"" $LOGGING_MANAGER $JAVA_OPTS $CATALINA_OPTS \
       -classpath "\"$CLASSPATH\"" \
       -Dcatalina.base="\"$CATALINA_BASE\"" \
@@ -237,7 +236,7 @@ if [ "$1" = "start" ]; then
     echo $! >"$CATALINA_PID"
   fi
 
-  echo "Tomcat started."
+#  echo "[LOG] Hatsukoi started."
 
 #elif [ "$1" = "stop" ]; then
 #  # TODO

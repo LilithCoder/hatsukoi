@@ -21,5 +21,11 @@
             <version>3.1.0</version>
             <scope>provided</scope>
         </dependency>
+        <!--    digester: 解析xml用-->
+        <dependency>
+            <groupId>commons-digester</groupId>
+            <artifactId>commons-digester</artifactId>
+            <version>1.8</version>
+        </dependency>
     </dependencies>
 </project>

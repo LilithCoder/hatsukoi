@@ -47,4 +47,7 @@ main方法主入口：
 4. 初始化完三个ClassLoader对象后，init() 方法就使用 catalinaClassLoader 加载了org.apache.catalina.startup.Catalina 类(Catalina.jar就在Catalina类加载器${catalina.home}/lib下)，并创建了一个对象，然后通过反射调用这个对象的 setParentClassLoader 方法，传入的参数是 sharedClassLoader，通过反射加载Catalina类，并设置Catalina的父类加载器为sharedLoader。最后把这个 Catalina 对象复制给 catalinaDaemon 属性
 5. 处理命令行参数，如果是start，调用catalina的load和start方法；如果是stopServer，调用catalina的stopServer方法
 
+### Catalina的加载
+
+
 <!-- ![](./uml_diagram1.svg) -->
